@@ -64,21 +64,20 @@ private:
     QPushButton *button4;
 
     QComboBox *layerBox;
-    QPushButton *createButton;
-    QPushButton *calButton;
 
     QTableWidget *firTableWidget;
 
     MyUsualRadioBox *radioBox;
 
-
+    QLabel *materialLabel;
+    QPushButton *loadMaterialButton;
 
 
 signals:
 
 public slots:
     void changeTable(int index);
-
+    void showLoadDialog();
 };
 
 #endif // WIDGET_IHCP_1_H

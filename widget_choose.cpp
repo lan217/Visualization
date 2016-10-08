@@ -155,6 +155,7 @@ WidgetChoose::WidgetChoose(QWidget *parent) :
 
     createButton = new QPushButton(tr("生成计算文件"), this);
     createButton->setFixedSize(Utils::largeButtonSize());
+    connect(createButton, &QPushButton::clicked, this, &WidgetChoose::saveParameterData);
     calButton = new QPushButton(tr("开始计算"), this);
     calButton->setFixedSize(Utils::largeButtonSize());
 
@@ -274,4 +275,24 @@ void WidgetChoose::changeAtmosphereAvailability(const QString dir)
         selectAtmosphereButton->setDisabled(false);
         atmosphereFileEdit->setDisabled(false);
     }
+}
+
+void WidgetChoose::saveParameterData()
+{
+    QString paraData;
+    paraData += cruiseStratEdit->text() + " " + cruiseEndEdit->text() + "\n";
+    paraData += trajectoryStartLineEdit->text() + "\n";
+
+    paraData += "时间  高度  马赫数   攻角   侧滑角   舵偏角   速度   静温   静压   分离特征量(质量或推力)\n";
+    for (int i = 0;i < trajectoryParaColTable->columnCount();i++) {
+        paraData += trajectoryParaColTable->item(1, i)->text() + " ";
+    }
+    paraData += "\n";
+
+    paraData += QString::number(heightUnitsBox->radioIndex() + 1) + "\n";
+    paraData += QString::number(angleUnitsBox->radioIndex() + 1) + "\n";
+    paraData += QString::number(staticTmpUnitsBox->radioIndex() + 1) + "\n";
+    paraData += QString::number(staticPressureUnitsBox->radioIndex() + 1) + "\n";
+
+
 }

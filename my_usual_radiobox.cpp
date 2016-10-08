@@ -1,5 +1,6 @@
 #include "my_usual_radiobox.h"
 #include <QLayout>
+
 /**
  * @brief MyUsualRadioBox::MyUsualRadioBox
  * @param groupTitle
@@ -21,7 +22,7 @@ MyUsualRadioBox::MyUsualRadioBox(const QString &groupTitle, const QStringList &t
         radioGroup->addButton(newRadioButton);
         radioGroup->setId(newRadioButton, i);
 
-        if (i == this->numRadio - 1) {
+        if (i == 0) {
             newRadioButton->setChecked(true);
         }
 
@@ -122,4 +123,16 @@ void MyUsualRadioBox::insertWidgetWithButtonIndex(int index, QWidget *widget)
             extraLayout->addWidget(widget);
         }
     }
+}
+
+void MyUsualRadioBox::insertWithButtonIndexEnd(int index)
+{
+    if (radioGroup->button(index)) {
+        QHBoxLayout *extraLayout = this->layout()->findChild<QHBoxLayout *>("extraLayout" + QString::number(index));
+
+        if (extraLayout) {
+            extraLayout->addStretch(1);
+        }
+    }
+
 }

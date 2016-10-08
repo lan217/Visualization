@@ -22,7 +22,7 @@ public:
     void enable();
     void disable();
     void insertWidgetWithButtonIndex(int index, QWidget *widget);
-
+    void insertWithButtonIndexEnd(int index);
 
 private:
     int numRadio;

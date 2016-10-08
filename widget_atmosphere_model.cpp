@@ -1,43 +1,50 @@
 #include "widget_atmosphere_model.h"
 #include "dialog_table.h"
 #include <QDebug>
+#include <QHeaderView>
 AtmosphereModelWidget::AtmosphereModelWidget(QWidget *parent) :
     QWidget(parent)
 {
     QGridLayout *mainLayout = new QGridLayout();
     QStringList radioLabels;
-    radioLabels << "1. 1962年u.s. standard atmosphere大气参数表" << "2. 风洞流场参数"
+    radioLabels << "1. 1962年u.s. standard大气参数表" << "2. 风洞流场参数"
                 << "3. 输入大气参数"
-                << "4. 1963 patrick air force base atmosphere大气参数表"
-                << "5. 1971 vandenberg reference atmosphere大气参数表"
-                << "6. 1973 vandenberg hot day atmosphere大气参数表"
-                << "7. 1973 vandenberg cold day atmosphere大气参数表"
-                << "8. 1971 kennedy hot day atmosphere大气参数表"
-                << "9. 1971 kennedy cold day atmosphere大气参数表"
-                << "10. 1976 u.s. standard atmosphere大气参数表";
+                << "4. 1963年patrick air force base大气参数表"
+                << "5. 1971年vandenberg reference大气参数表"
+                << "6. 1973年vandenberg hot day大气参数表"
+                << "7. 1973年vandenberg cold day大气参数表"
+                << "8. 1971年kennedy hot day大气参数表"
+                << "9. 1971年kennedy cold day大气参数表"
+                << "10. 1976年u.s. standard大气参数表";
     atmosphereRadioBox = new MyUsualRadioBox("", radioLabels, MyUsualRadioBox::Vertical);
     atmosphereRadioBox->setRadioIndex(0);
 
     loadWindButton = new QPushButton(tr("载入风动参数"));
-    loadWindButton->setObjectName("载入大气参数   ");
+    loadWindButton->setObjectName("loadWindButton");
     loadWindButton->setEnabled(false);
-//    loadWindButton->setFixedWidth(Utils::largeButtonSize().width() * 0.5);
-    loadAtmosphereButton = new QPushButton(tr("load atmospheric data parameter"));
+    loadAtmosphereButton = new QPushButton(tr("载入大气参数"));
     loadAtmosphereButton->setObjectName("loadAtmosphereButton");
     loadAtmosphereButton->setEnabled(false);
-//    loadAtmosphereButton->setFixedWidth(Utils::largeButtonSize().width() * 0.5);
     connect(loadWindButton, &QPushButton::clicked, this, &AtmosphereModelWidget::showLoadDialog);
     connect(loadAtmosphereButton, &QPushButton::clicked, this, &AtmosphereModelWidget::showLoadDialog);
 
     atmosphereRadioBox->insertWidgetWithButtonIndex(1, loadWindButton);
+//    atmosphereRadioBox->insertWithButtonIndexEnd(1);
     atmosphereRadioBox->insertWidgetWithButtonIndex(2, loadAtmosphereButton);
+//    atmosphereRadioBox->insertWithButtonIndexEnd(2);
     connect(atmosphereRadioBox, &MyUsualRadioBox::radioToggle, this, &AtmosphereModelWidget::changeButtonEnable);
 
-    mainLayout->addWidget(atmosphereRadioBox, 0, 0);
 
-    mainLayout->setColumnStretch(0, 2);
-    mainLayout->setColumnStretch(1, 1);
-    mainLayout->setRowStretch(0, 2);
+    inputTable = new QTableWidget(5, 3);
+    inputTable->verticalHeader()->setVisible(false);
+    inputTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);;
+    inputTable->setVisible(false);
+    mainLayout->addWidget(atmosphereRadioBox, 0, 0);
+    mainLayout->addWidget(inputTable, 0, 1, Qt::AlignTop);
+
+    mainLayout->setColumnStretch(0, 7);
+    mainLayout->setColumnStretch(1, 5);
+    mainLayout->setRowStretch(0, 7);
     mainLayout->setRowStretch(1, 1);
     this->setLayout(mainLayout);
 }
@@ -65,19 +72,30 @@ void AtmosphereModelWidget::showLoadDialog()
 
 void AtmosphereModelWidget::changeButtonEnable(int index)
 {
-    qDebug() << index;
+    QStringList headerLabels;
     switch (index) {
     case 1:
+        headerLabels << "时间" << "静温" << "静压";
+        inputTable->setHorizontalHeaderLabels(headerLabels);
+        inputTable->setVisible(true);
         loadWindButton->setEnabled(true);
         loadAtmosphereButton->setEnabled(false);
         break;
     case 2:
+        headerLabels << "高度" << "静温" << "静压";
+        inputTable->setHorizontalHeaderLabels(headerLabels);
         loadWindButton->setEnabled(false);
         loadAtmosphereButton->setEnabled(true);
         break;
     default:
+        inputTable->setVisible(false);
         loadWindButton->setEnabled(false);
         loadAtmosphereButton->setEnabled(false);
         break;
     }
+}
+
+QString AtmosphereModelWidget::getParameterData()
+{
+    return QString("atmos");
 }

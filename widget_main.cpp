@@ -28,7 +28,11 @@ qDebug("%d  %d", this->width(), this->height());
                         "}"
                         "QLineEdit#dirEdit{"
                         "max-width: " + QString::number(Utils::windowSize().width()) + "px;"
-                        "}");
+                        "}"
+                        "*{font-size :" + QString::number((int)(Utils::windowSize().height() * 0.024)) + "px;}");
+//                        "QTableWidget{"
+//                        "font-size: 20px;"
+//                        "}");
     QVBoxLayout *mainLayout = new QVBoxLayout();
     tabWidget = new QTabWidget(this);
 

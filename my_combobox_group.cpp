@@ -56,11 +56,16 @@ int comboBoxGroupBox::transformIndex()
 void comboBoxGroupBox::enable()
 {
     comboBox->setEnabled(true);
+    firstLabel->setVisible(true);
+    firstEdit->setVisible(true);
 }
 
 void comboBoxGroupBox::disable()
 {
     comboBox->setDisabled(true);
+    firstLabel->setVisible(false);
+    firstEdit->setVisible(false);
+
 }
 TransformBox::TransformBox(const QString &groupTitle, QWidget *parent) :
     comboBoxGroupBox(groupTitle, parent)

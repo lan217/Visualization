@@ -20,6 +20,8 @@ private:
     QStackedWidget *stackedWidget;
     Widget_ihcp_1 *widgetIchp1;
     Widget_ihcp_2 *widgetIchp2;
+    QPushButton *createButton;
+    QPushButton *calButton;
 
 signals:
 

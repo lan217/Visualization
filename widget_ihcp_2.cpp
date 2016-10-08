@@ -31,10 +31,6 @@ Widget_ihcp_2::Widget_ihcp_2(QWidget *parent) :
     title = "外壁热流(推荐)";
     radioBox2 = new MyUsualRadioBox(title, labels, MyUsualRadioBox::Horizontal,this);
 
-    createButton = new QPushButton(tr("生成计算文件"), this);
-    createButton->setFixedSize(Utils::largeButtonSize());
-    calButton = new QPushButton(tr("开始计算"), this);
-    calButton->setFixedSize(Utils::largeButtonSize());
 
 
 
@@ -42,8 +38,6 @@ Widget_ihcp_2::Widget_ihcp_2(QWidget *parent) :
     mainLayout->addWidget(radioBox1, 1, 1);
     mainLayout->addWidget(radioBox2, 1, 0);
     mainLayout->addWidget(editBox2, 2, 0);
-    mainLayout->addWidget(createButton, 4, 1, Qt::AlignRight);
-    mainLayout->addWidget(calButton, 4, 2);
     mainLayout->setColumnStretch(0, 2);
     mainLayout->setColumnStretch(1, 5);
     mainLayout->setColumnStretch(2, 2);

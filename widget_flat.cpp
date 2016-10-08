@@ -17,6 +17,7 @@ FlatWidget::FlatWidget(QWidget *parent) :
     labels.clear();
     labels << "用前一时刻" << "定温壁" ;
     radioBox2 = new MyUsualRadioBox(title, labels, MyUsualRadioBox::Horizontal, this);
+    radioBox2->setRadioIndex(1);
     wallTemperatureEdit = new QLineEdit();
     radioBox2->insertWidgetWithButtonIndex(1, wallTemperatureEdit);
     radioBox2->setObjectName("temperatureRadio");
@@ -27,9 +28,16 @@ FlatWidget::FlatWidget(QWidget *parent) :
     labels << "不修正" << "修正";
     radioBox3 = new MyUsualRadioBox(title, labels, MyUsualRadioBox::Horizontal, this);
     distanceEdit = new QLineEdit();
+    distanceEdit->setEnabled(false);
     radioBox3->insertWidgetWithButtonIndex(1, distanceEdit);
+    radioBox3->setRadioIndex(0);
     radioBox3->setObjectName("correctRadio");
+
     connect(radioBox3, &MyUsualRadioBox::radioToggle, this, &FlatWidget::changeWidgetByRadioBox);
+
+    labels.clear();
+    labels  << "迎风" << "背风";
+    calPosRadio = new MyUsualRadioBox(tr("计算位置"), labels );
 
     title = "曼格勒因子";
     labels.clear();
@@ -44,39 +52,28 @@ FlatWidget::FlatWidget(QWidget *parent) :
 
     title = "";
     labels.clear();
-    labels << "路径长度:" << "发射率:";
+    labels << "路径长度(m):" << "发射率:";
     editBox = new GeneralEditBox(title, labels, 1, 2, this);
     editBox->setFixedHeight(Utils::windowSize().height() * 0.1);
 
     labels.clear();
-    labels << "流动" << "压力";
+    labels << "流动" << "压力" << "角度";
 
     QGroupBox *tableBox = new QGroupBox("");
-    QHBoxLayout *tableLayout = new QHBoxLayout();
+    QGridLayout *tableLayout = new QGridLayout();
     tableWidget = new QTableWidget;
-    tableWidget->setRowCount(2);
+    tableWidget->setRowCount(3);
     tableWidget->setColumnCount(4);
     tableWidget->setVerticalHeaderLabels(labels);
     tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-//    combomBox1 = new QComboBox();
-//    combomBox1->addItem(tr("楔"));
-//    combomBox1->addItem(tr("锥"));
+
     combomBox2 = new QComboBox();
     combomBox2->addItem(tr("楔"));
     combomBox2->addItem(tr("锥"));
     combomBox2->addItem(tr("修正牛顿"));
     combomBox2->addItem(tr("普迈"));
     combomBox2->addItem(tr("输入Mc,Cp关系"));
-//    int count = 0;
-//    for(int i = 0; i < 2; i++)
-//    {
-//        count = i;
-//        for(int j = 0; j < 4; j++)
-//        {
-//            tableWidget->setCellWidget(count, j, combomBox1);
-//        }
-//    }
     for(int i = 0; i < 4; i++)
     {
         combomBox1 = new QComboBox();
@@ -94,7 +91,20 @@ FlatWidget::FlatWidget(QWidget *parent) :
         combomBox2->addItem(tr("输入Mc,Cp关系"));
         tableWidget->setCellWidget(1, j, combomBox2);
     }
-    tableLayout->addWidget(tableWidget,0,Qt::AlignTop);
+
+    materialLayer = new QComboBox();
+    materialLayer->addItem(tr("1"));
+    materialLayer->addItem(tr("2"));
+    materialLayer->addItem(tr("3"));
+    materialLayer->addItem(tr("4"));
+    materialLayer->setCurrentIndex(3);
+
+    materialLabel = new QLabel(tr("选择段数："));
+    connect(materialLayer, SIGNAL(currentIndexChanged(int)), this, SLOT(changeTable(int)));
+
+    tableLayout->addWidget(materialLabel,0, 0);
+    tableLayout->addWidget(materialLayer,0, 1);
+    tableLayout->addWidget(tableWidget,1, 0, 1, 4,Qt::AlignTop);
     tableBox->setLayout(tableLayout);
     tableWidget->setFixedHeight(Utils::windowSize().height() * 0.17);
 
@@ -103,21 +113,26 @@ FlatWidget::FlatWidget(QWidget *parent) :
 
 //    QSpacerItem *spaceItem = new QSpacerItem(Utils::windowSize().width() * 0.15 , 1);
     QGridLayout *mainLayout = new QGridLayout();
-    mainLayout->addWidget(radioBox, 0, 0, 1, 2);
-    mainLayout->addWidget(editBox, 1, 0, 1, 2);
-    mainLayout->addWidget(tableBox, 2, 0, 1, 2,Qt::AlignTop);
-    mainLayout->addWidget(amplificationBox, 3, 0, 1, 2);
-    mainLayout->addWidget(radioBox3, 4, 1);
-    mainLayout->addWidget(radioBox4, 4, 0);
-    mainLayout->addWidget(thinRadio, 4, 3);
-    mainLayout->addWidget(radioBox2, 4, 2);
-    mainLayout->addWidget(transformRadioBox, 5, 0, 1, 3);
+    mainLayout->addWidget(radioBox, 0, 0, 1, 3);
+    mainLayout->addWidget(editBox, 1, 0, 1, 3);
+//    mainLayout->addWidget(materialLabel, 2, 0);
+//    mainLayout->addWidget(materialLayer, 2, 1);
+    mainLayout->addWidget(tableBox, 3, 0, 1, 3,Qt::AlignTop);
+    mainLayout->addWidget(amplificationBox, 4, 0, 1, 4);
+    mainLayout->addWidget(radioBox3, 5, 1, 1, 2);
+    mainLayout->addWidget(radioBox4, 5, 0);
+    mainLayout->addWidget(thinRadio, 5, 4);
+    mainLayout->addWidget(radioBox2, 5, 3);
+    mainLayout->addWidget(transformRadioBox, 6, 0, 1, 4);
 //    mainLayout->addItem(spaceItem, 4,3);
-    mainLayout->setRowStretch(6, 1);
+    mainLayout->setRowStretch(7, 1);
     mainLayout->setColumnStretch(0, 1);
-    mainLayout->setColumnStretch(1, 4);
-    mainLayout->setColumnStretch(2, 4);
-    mainLayout->setColumnStretch(3, 1);
+    mainLayout->setColumnStretch(1, 1);
+    mainLayout->setColumnStretch(2, 1);
+    mainLayout->setColumnStretch(3, 3);
+    mainLayout->setColumnStretch(4, 1);
+    mainLayout->setColumnStretch(5, 1);
+    mainLayout->setSpacing(Utils::windowSize().width() * 0.01);
     this->setLayout(mainLayout);
 }
 
@@ -154,4 +169,33 @@ void FlatWidget::changeWidgetByRadioBox(int index)
                 distanceEdit->setEnabled(true);
             }
         }
+}
+
+void FlatWidget::changeTable(int index)
+{
+    for (int i = 0;i < tableWidget->rowCount();i++) {
+        for (int j = 0;j < tableWidget->columnCount();j++) {
+            bool isEnabled = j <= index ? true : false;
+            QColor color = j <= index ? QColor("#FFFFFF") : QColor("#CCCCCC");
+            Qt::ItemFlags flags = j <= index ? Qt::ItemIsEditable | Qt::ItemIsEnabled|Qt::ItemIsSelectable : Qt::NoItemFlags;
+            if (i == 0 || i==1) {
+                tableWidget->cellWidget(i, j)->setEnabled(isEnabled);
+            } else {
+                QTableWidgetItem *item = tableWidget->itemAt(i , j);
+
+                if (!item) {
+                    item = new QTableWidgetItem();
+
+                    tableWidget->setItem( i, j, item);
+                }
+                item->setBackgroundColor(color);
+                item->setFlags(flags);
+            }
+        }
+    }
+}
+
+QString FlatWidget::getParameterData()
+{
+    return QString("atmos");
 }

@@ -31,6 +31,8 @@ void WidgetIhcp::init()
     firInterface->setText(0, tr("打开热辨识计算"));
     MyQtreeWidgetItem *twoInterface = new MyQtreeWidgetItem(treeWidgetItem, 1);
     twoInterface->setText(0, tr("打开热计算窗口"));
+    treeWidget->expandAll();
+    treeWidget->setItemsExpandable(false);
 
     stackedWidget = new QStackedWidget(this);
     Widget_ihcp_1 *widgetOne = new Widget_ihcp_1(this);
@@ -38,13 +40,22 @@ void WidgetIhcp::init()
     stackedWidget->addWidget(widgetOne);
     stackedWidget->addWidget(widgetTwo);
 
+    createButton = new QPushButton(tr("载入"), this);
+    createButton->setFixedSize(Utils::largeButtonSize());
+    calButton = new QPushButton(tr("保存"), this);
+    calButton->setFixedSize(Utils::largeButtonSize());
+
     //setting all layout
     QHBoxLayout *mainLayout = new QHBoxLayout();
+    QGridLayout *rightLayout = new QGridLayout();
+    rightLayout->addWidget(stackedWidget, 0, 0, 1, 6);
+    rightLayout->addWidget(createButton, 1, 0);
+    rightLayout->addWidget(calButton, 1, 1);
 
     mainLayout->addWidget(treeWidget);
-    mainLayout->addWidget(stackedWidget);
+    mainLayout->addLayout(rightLayout);
     mainLayout->setStretchFactor(treeWidget, 1);
-    mainLayout->setStretchFactor(stackedWidget, 4);
+    mainLayout->setStretchFactor(rightLayout, 4);
 
     this->setLayout(mainLayout);
 }

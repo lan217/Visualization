@@ -41,10 +41,13 @@ void WidgetHcd::init()
 
     materialGraph = new QGraphicsView();
     materialTable = new QTableWidget(5,2);
-    materialTable->verticalHeader()->setVisible(false);
+//    materialTable->verticalHeader()->setVisible(false);
     QStringList headerLabels;
     headerLabels << "材料" << "厚度";
     materialTable->setHorizontalHeaderLabels(headerLabels);
+    headerLabels.clear();
+    headerLabels << "①(最外)" << "②" << "③" << "④" << "⑤(最内)";
+    materialTable->setVerticalHeaderLabels(headerLabels);
     materialTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     materialTable->setRowCount(5);
     fillMetalTable();
@@ -74,22 +77,23 @@ void WidgetHcd::init()
     QGridLayout *initialGroupLayout = new QGridLayout();
 
     QStringList labels;
-    labels << "初始温度:" << "初始时刻:" << "终止时刻:" << "时间步长："
-           << "最大迭代次数" << "计算结果结果保存间隔：" << "监控点结果时间间隔："
-           << "监控点坐标：" << "" << "" << "" << "" << "";
-    hcdEditBox = new GeneralEditBox("", labels, 13, 1, this);
+    labels << "初始温度(℃):" << "初始时刻(s):" << "终止时刻(s):" << "时间步长："
+           << "最大迭代次数" << "计算结果结果保存间隔" << "监控点结果时间间隔："
+           << "监控点1坐标：" << "监控点2坐标：" << "监控点3坐标："
+           << "监控点4坐标：" << "监控点5坐标：";
+    hcdEditBox = new GeneralEditBox("", labels, 12, 1, this);
 
 
     coordinateGraph = new QGraphicsView();
-    coordinateGraph->setFixedHeight(Utils::windowSize().height() * 0.5);
+//    coordinateGraph->setFixedHeight(Utils::windowSize().height() * 0.5);
 
 
 
-    initialGroupLayout->addWidget(hcdEditBox, 0, 0, 6, 2);
+    initialGroupLayout->addWidget(hcdEditBox, 0, 0, 1, 2);
     initialGroupLayout->addWidget(coordinateGraph, 0, 2, 1, 3);
 
     initialGroupBox->setLayout(initialGroupLayout);
-    initialGroupBox->setFixedHeight(Utils::windowSize().height() * 0.7);
+//    initialGroupBox->setFixedHeight(Utils::windowSize().height() * 0.7);
 
     // leftDown layout
     QGroupBox *borderGroupBox = new QGroupBox(tr("边界参数设置"));
@@ -98,7 +102,7 @@ void WidgetHcd::init()
 
     borderTable = new QTableWidget(2,5);
     QStringList colLabels;
-    colLabels << "边界条件" << "输入值" << "是否开启辐射" << "冷壁温度" << "设置输入";
+    colLabels << "边界条件" << "输入值" << "是否开启辐射" << "冷壁温度(K)" << "设置输入";
     borderTable->setHorizontalHeaderLabels(colLabels);
     borderTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     borderTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -139,6 +143,7 @@ void WidgetHcd::init()
 
     createButton = new QPushButton(tr("生成计算文件"), this);
     createButton->setFixedSize(Utils::largeButtonSize());
+    connect(createButton, &QPushButton::clicked, this, &WidgetHcd::saveParameterData);
     calButton = new QPushButton(tr("开始计算"), this);
     calButton->setFixedSize(Utils::largeButtonSize());
 
@@ -160,11 +165,10 @@ void WidgetHcd::init()
 void WidgetHcd::fillMetalTable()
 {
     QStringList labels;
-    QStringList metalList = MaterialLib::getInstance()->getMaterial();
+    QMap<int, MaterialLib::Material> material = MaterialLib::getInstance()->getMaterialNameList();
 
-    for (QStringList::iterator it = metalList.begin();it != metalList.end();it++){
-        QString current = *it;
-        labels << current;
+    for (QMap<int, MaterialLib::Material>::iterator it = material.begin();it != material.end();it++){
+        labels << it.value().materialName;
     }
     for (int i = 0;i < materialTable->rowCount();i++) {
         QComboBox *metalBox = new QComboBox();
@@ -200,6 +204,7 @@ void WidgetHcd::changeTable(int index)
 void WidgetHcd::showLoadDialog()
 {
     MateriaLibDialog *dialog = new MateriaLibDialog(this);
+    connect(dialog, &MateriaLibDialog::dataChanged, this, &WidgetHcd::fillMetalTable);
     dialog->show();
 }
 
@@ -209,4 +214,22 @@ void WidgetHcd::showSettingInputDialog()
     headerLabels << tr("时刻(s)") << tr("冷壁热流(w/m2)") << tr("恢复焓(j/kg)");
     TableDialog *dialog = new TableDialog(tr("边界条件设置输入"), headerLabels, this);
     dialog->show();
+}
+
+void WidgetHcd::saveParameterData()
+{
+    QString paraData;
+
+    paraData += "   不同材料层厚度                材料名";
+    for (int i = 0;i <= layerBox->currentIndex();i++) {
+        QComboBox *comboBox = static_cast<QComboBox*>(materialTable->cellWidget(i, 0));
+        QString materialName = comboBox->currentText();
+        float height = materialTable->item(i, 1)->text().toFloat();
+        paraData += "MaterialHeight = " + QString::number(height) + "MaterialName = " + materialName + "\n";
+    }
+
+    paraData += "--坐标位置--   --边界条件--    --是否开启辐射散热功能--  "
+                "--气动热冷壁热流及恢复焓文件名称--    --气动热计算的冷壁温度（单位：K）--";
+    paraData += "";
+
 }

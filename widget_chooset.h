@@ -72,6 +72,7 @@ private:
 public slots:
     void showSelectedDirectory();
     void changeAtmosphereAvailability(const QString dir);
+    void saveParameterData();
 };
 
 #endif // WIDGET_CHOOSE_H

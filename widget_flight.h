@@ -5,6 +5,7 @@
 #include <QTableWidget>
 #include "generaleditbox.h"
 #include "common.h"
+#include <QTextEdit>
 
 class FlightWidget : public QWidget
 {
@@ -13,6 +14,8 @@ class FlightWidget : public QWidget
 public:
     explicit FlightWidget(QWidget *parent = 0);
     ~FlightWidget();
+    QString getParameterData();
+
 
 private:
     GeneralEditBox *timeEditBox;
@@ -20,6 +23,7 @@ private:
     QPushButton *saveButton;
     QPushButton *loadButton;
 
+    QTextEdit *textEdit;
 };
 
 #endif // WIDGET_FLIGHT_H

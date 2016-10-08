@@ -27,8 +27,15 @@ FlightWidget::FlightWidget(QWidget *parent) :
 //    loadButton = new QPushButton(tr("载入文件"), this);
 //    loadButton->setFixedSize(Utils::largeButtonSize());
 
+    QGroupBox *groupBox= new QGroupBox(tr("飞行数据"));
+    QGridLayout *groupLayout=new QGridLayout();
+
+    textEdit = new QTextEdit();
+    groupLayout->addWidget(textEdit, 0, 0);
+    groupBox->setLayout(groupLayout);
+
     mainLayout->addWidget(timeEditBox, 0, 0);
-    mainLayout->addWidget(tableWidget, 1, 0);
+    mainLayout->addWidget(groupBox, 1, 0);
 //    mainLayout->addWidget(saveButton, 3, 0);
 //    mainLayout->addWidget(loadButton, 3, 1);
 
@@ -44,4 +51,9 @@ FlightWidget::FlightWidget(QWidget *parent) :
 FlightWidget::~FlightWidget()
 {
 
+}
+
+QString FlightWidget::getParameterData()
+{
+    return QString("flight");
 }

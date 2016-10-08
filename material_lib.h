@@ -4,87 +4,42 @@
 #include <QStringList>
 #include <QList>
 #include <QMap>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 
 class MaterialLib
 {
 
 public:
     MaterialLib();
+    ~MaterialLib();
     class Material;
     static MaterialLib *getInstance();
-    QStringList getMaterial();
+    QMap<int, Material> getMaterialNameList();
+    QMap<float, float> getTmpLambdaMap(int index);
+    QMap<float, float> getTmpCpMap(int index);
     Material* getMaterial(int index);
+    bool updateMaterialName(int index, const QString &name);
+    bool updateMaterialProperty(int index, float destiny ,float emissivity);
+    bool updateMaterialTmpLambdaMap(int index, QMap<float, float> tmpLambdaMap);
+    bool updateMaterialTmpCpMap(int index, QMap<float, float> tmpCpMap);
 
     class Material {
-    private:
+    public:
         QString materialName;
         float destiny;
         float emissivity;
-        QMap<float, float> tmpLambdaMap;
-        QMap<float, float> tmpCpMap;
-    public:
-        Material()
-        {
-
-        }
-
-        QString getMaterialName()
-        {
-            return this->materialName;
-        }
-
-        void setMaterialName(const QString &name)
-        {
-            this->materialName = name;
-        }
-
-        float getDestiny()
-        {
-            return this->destiny;
-        }
-
-        void setDestiny(float destiny)
-        {
-            this->destiny = destiny;
-        }
-
-        float getEmissivity()
-        {
-            return this->emissivity;
-        }
-
-        void setEmissivity(float emissivity)
-        {
-            this->emissivity = emissivity;
-        }
-
-        QMap<float, float> getTmpLambdaMap()
-        {
-            return this->tmpLambdaMap;
-        }
-
-        QMap<float, float> getTmpCpMap()
-        {
-            return this->tmpCpMap;
-        }
-
-        void setTmpLambdaMap(QMap<float, float> tmpLambdaMap)
-        {
-            this->tmpLambdaMap = tmpLambdaMap;
-        }
-
-        void setTmpCpMap(QMap<float, float> tmpCpMap)
-        {
-            this->tmpCpMap = tmpCpMap;
-        }
+        int type;
     };
 
 
 private:
+    const static QString CREATE_MATERIAL_TABLE_SQL;
+    const static QString CREATE_TMPLAMBDA_TABLE_SQL;
+    const static QString CREATE_TMPCP_TABLE_SQL;
     static MaterialLib *mInstance;
-    static QList<Material*> materialList;
-    static QStringList materialNameList;
-
+    QSqlDatabase db;
 };
 
 #endif // MATERIAL_LIB_H

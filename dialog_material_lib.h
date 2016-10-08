@@ -29,8 +29,12 @@ private:
     QPushButton *saveMaterialButton;
     QTableWidget *tmpLambdaTable;
     QTableWidget *tmpCpTable;
+signals:
+    void dataChanged();
 public slots:
-    void treeitemClicked(QTreeWidgetItem* item);
+    void treeItemClicked(QTreeWidgetItem* item);
+    void treeItemChange(QTreeWidgetItem* item);
+    void saveMaterialLibData();
 };
 
 #endif //DIALOG_MATERIAL_LIB_H

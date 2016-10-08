@@ -18,6 +18,7 @@ public:
     explicit CalBallHeadWidget(QWidget *parent = 0);
     ~CalBallHeadWidget();
     void init();
+    QString getParameterData();
 
 private:
     QLineEdit *lewisEdit;
@@ -30,6 +31,8 @@ private:
     MyUsualRadioBox *twoDimensionRadio;
     MyUsualRadioBox *lewisRadio;
     MyUsualRadioBox *temperatureRadio;
+    MyUsualRadioBox *calPosRadio;
+
 public slots:
     void changeWidgetByRadioBox(int index);
 };

@@ -17,6 +17,7 @@ public:
     explicit CalCylinderWidget(QWidget *parent = 0);
     ~CalCylinderWidget();
     void init();
+    QString getParameterData();
 
 private:
     QLineEdit *lewisEdit;
@@ -28,6 +29,9 @@ private:
     MyUsualRadioBox *lewisRadio;
     MyUsualRadioBox *planeRadio;
     MyUsualRadioBox *rudderRadio;
+    MyUsualRadioBox *calPosRadio;
+    MyUsualRadioBox *temperatureRadio;
+    QLineEdit *wallTemperatureEdit;
 public slots:
     void changeWidgetByRadioBox(int index);
 };

@@ -44,14 +44,14 @@ private:
     QGraphicsView *materialGraph;
     QGraphicsView *coordinateGraph;
 
-    void fillMetalTable();
-
 signals:
 
 public slots:
+    void fillMetalTable();
     void changeTable(int index);
     void showLoadDialog();
     void showSettingInputDialog();
+    void saveParameterData();
 };
 
 #endif // WIDGET_HCD_H

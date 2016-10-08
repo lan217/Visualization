@@ -23,8 +23,6 @@ private:
     MyUsualRadioBox *radioBox1;
     MyUsualRadioBox *radioBox2;
 
-    QPushButton *createButton;
-    QPushButton *calButton;
 
 };
 

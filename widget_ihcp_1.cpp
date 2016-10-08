@@ -1,4 +1,6 @@
 #include "widget_ihcp_1.h"
+#include "material_lib.h"
+#include "dialog_material_lib.h"
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -69,13 +71,17 @@ void Widget_ihcp_1::init()
     button4 = new QPushButton(tr("热流结果RES"), this);
     button4->setFixedSize(Utils::largeButtonSize() * 0.5);
 
-    createButton = new QPushButton(tr("生成计算文件"), this);
-    createButton->setFixedSize(Utils::largeButtonSize());
-    calButton = new QPushButton(tr("开始计算"), this);
-    calButton->setFixedSize(Utils::largeButtonSize());
+
+    materialLabel = new QLabel(tr("材料库："));
+    loadMaterialButton = new QPushButton(tr("载入文件"));
+    connect(loadMaterialButton, &QPushButton::clicked, this, &Widget_ihcp_1::showLoadDialog);
+    QHBoxLayout *materialLayout = new QHBoxLayout();
+    materialLayout->addWidget(materialLabel);
+    materialLayout->addWidget(loadMaterialButton);
+    materialLayout->addStretch(1);
 
     QGroupBox *tableBox = new QGroupBox("");
-    QHBoxLayout *tableLayout = new QHBoxLayout();
+    QVBoxLayout *tableLayout = new QVBoxLayout();
     firTableWidget = new QTableWidget(3, 5);
     firTableWidget->setRowCount(3);
     firTableWidget->setColumnCount(5);
@@ -88,17 +94,19 @@ void Widget_ihcp_1::init()
     firTableWidget->setVerticalHeaderLabels(labels);
     firTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     firTableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    tableLayout->addWidget(firTableWidget,0,Qt::AlignTop);
+    tableLayout->addLayout(materialLayout,0);
+
+    tableLayout->addWidget(firTableWidget,1,Qt::AlignTop);
+
     tableBox->setLayout(tableLayout);
     firTableWidget->setFixedHeight(Utils::windowSize().height() * 0.3);
 
     for (int i = 0;i < 5;i++) {
         QStringList labels;
-        QStringList metalList = MaterialLib::getInstance()->getMaterial();
+        QMap<int, MaterialLib::Material> material = MaterialLib::getInstance()->getMaterialNameList();
 
-        for (QStringList::iterator it = metalList.begin();it != metalList.end();it++){
-            QString current = *it;
-            labels << current;
+        for (QMap<int, MaterialLib::Material>::iterator it = material.begin();it != material.end();it++){
+            labels << it.value().materialName;
         }
         for (int i = 0;i < firTableWidget->columnCount();i++) {
             QComboBox *metalBox = new QComboBox();
@@ -175,8 +183,7 @@ void Widget_ihcp_1::init()
     mainLayout->addWidget(button2, 2, 1);
     mainLayout->addWidget(button3, 3, 0);
     mainLayout->addWidget(button4, 3, 1);
-    mainLayout->addWidget(createButton, 6, 4);
-    mainLayout->addWidget(calButton, 6, 5);
+
 //    mainLayout->setColumnStretch(0, 1);
 //    mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(5, 1);
@@ -207,4 +214,10 @@ void Widget_ihcp_1::changeTable(int index)
             }
         }
     }
+}
+
+void Widget_ihcp_1::showLoadDialog()
+{
+    MateriaLibDialog *dialog = new MateriaLibDialog(this);
+    dialog->show();
 }

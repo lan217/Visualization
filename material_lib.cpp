@@ -1,37 +1,45 @@
 #include "material_lib.h"
 #include <QDebug>
-QStringList MaterialLib::materialNameList;
+
 MaterialLib* MaterialLib::mInstance;
-QList<MaterialLib::Material*> MaterialLib::materialList;
+const QString MaterialLib::CREATE_MATERIAL_TABLE_SQL = "CREATE TABLE material_table ("
+                                           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                           "name VARCHAR NOT NULL,"
+                                           "destiny FLOAT,"
+                                           "emissivity FLOAT,"
+                                           "type       INTEGER NOT NULL)";
+const QString MaterialLib::CREATE_TMPLAMBDA_TABLE_SQL = "CREATE TABLE tmp_lambda_table ("
+                                           "id          INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                           "material    INTEGER REFERENCES material_table (id) ON DELETE RESTRICT "
+                                                                                        "ON UPDATE RESTRICT,"
+                                           "temperature FLOAT,"
+                                           "lambda      FLOAT)";
+const QString MaterialLib::CREATE_TMPCP_TABLE_SQL = "CREATE TABLE tmp_cp_table ("
+                                            "id         INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                            "material   INTEGER REFERENCES material_table (id) ON DELETE RESTRICT "
+                                                                                        "ON UPDATE RESTRICT,"
+                                            "temperature FLOAT,"
+                                            "cp         FLOAT)";
+
+
 MaterialLib::MaterialLib()
 {
-    for (int i = 0;i < 5;i++) {
-        Material* material = new Material();
-        material->setDestiny(i);
-        material->setEmissivity(i);
-        QMap<float, float> map;
-        map.insert(200, 2);
-        map.insert(400, 2);
-        map.insert(500, 2);
-        material->setMaterialName("不锈钢" + QString::number(i));
-        material->setTmpCpMap(map);
-        material->setTmpLambdaMap(map);
-        materialList.append(material);
-    }
+    db = QSqlDatabase::addDatabase("QSQLITE");
 
+    db.setDatabaseName("test.db");
+    db.open();
 
-    for (int i = 0;i < materialList.size();i++) {
-        this->materialNameList << materialList.at(i)->getMaterialName();
-    }
+    QSqlQuery query = QSqlQuery(db);
+    query.exec(CREATE_MATERIAL_TABLE_SQL);
+    query.exec(CREATE_TMPLAMBDA_TABLE_SQL);
+    query.exec(CREATE_TMPCP_TABLE_SQL);
 }
-MaterialLib::Material* MaterialLib::getMaterial(int index)
+
+MaterialLib::~MaterialLib()
 {
-    if (index < materialList.size()) {
-
-        return materialList.at(index);
+    if (db.isOpen()) {
+        db.close();
     }
-
-    return NULL;
 }
 
 MaterialLib* MaterialLib::getInstance()
@@ -44,8 +52,177 @@ MaterialLib* MaterialLib::getInstance()
 
 }
 
-QStringList MaterialLib::getMaterial()
+MaterialLib::Material* MaterialLib::getMaterial(int index)
 {
-    return materialNameList;
+    Material* material = NULL;
+
+    QSqlQuery query = QSqlQuery(db);;
+    QString sql = "SELECT destiny, emissivity FROM material_table "
+                  "WHERE id = " + QString::number(index);
+
+    if (query.exec(sql)) {
+
+        while (query.next()) {
+            material = new Material();
+            material->destiny = query.value(0).toFloat();
+            material->emissivity = query.value(1).toFloat();
+        }
+    }
+
+    return material;
 }
 
+QMap<int, MaterialLib::Material> MaterialLib::getMaterialNameList()
+{
+    QMap<int, MaterialLib::Material> map;
+
+    QSqlQuery query = QSqlQuery(db);;
+    QString sql = "SELECT id, name, type FROM material_table";
+
+    if (query.exec(sql)) {
+        while (query.next()) {
+            Material material;
+            material.materialName = query.value(1).toString();
+            material.type = query.value(2).toInt();
+            map.insert(query.value(0).toInt(), material);
+        }
+    }
+
+    return map;
+}
+
+QMap<float, float> MaterialLib::getTmpLambdaMap(int index)
+{
+    QMap<float, float> map;
+
+    QSqlQuery query = QSqlQuery(db);;
+    QString sql = "SELECT t2.temperature, t2.lambda FROM material_table AS t1 "
+                  "JOIN tmp_lambda_table AS t2 ON t1.id = t2.material "
+                  "WHERE t1.id = " + QString::number(index);
+
+    if (query.exec(sql)) {
+        while (query.next()) {
+            map.insert(query.value(0).toFloat(), query.value(1).toFloat());
+        }
+    }
+
+    return map;
+}
+
+QMap<float, float> MaterialLib::getTmpCpMap(int index)
+{
+    QMap<float, float> map;
+
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "SELECT t2.temperature, t2.lambda FROM material_table AS t1 "
+                  "JOIN tmp_cp_table AS t2 ON t1.id = t2.material "
+                  "WHERE t1.id = " + QString::number(index);
+
+    if (query.exec(sql)) {
+        while (query.next()) {
+            map.insert(query.value(0).toFloat(), query.value(1).toFloat());
+        }
+    }
+
+    return map;
+}
+
+bool MaterialLib::updateMaterialName(int index, const QString& name)
+{
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "UPDATE material_table SET name = ? WHERE id = ?";
+
+    query.prepare(sql);
+    query.addBindValue(name);
+    query.addBindValue(index);
+    if (query.exec()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MaterialLib::updateMaterialProperty(int index, float destiny ,float emissivity)
+{
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "UPDATE material_table SET destiny = ?, emissivity = ? WHERE id = ?";
+
+    query.prepare(sql);
+    query.addBindValue(destiny);
+    query.addBindValue(emissivity);
+    query.addBindValue(index);
+    if (query.exec()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MaterialLib::updateMaterialTmpLambdaMap(int index, QMap<float, float> tmpLambdaMap)
+{
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "DELETE FROM tmp_lambda_table WHERE material = ?";
+
+    query.prepare(sql);
+    query.addBindValue(index);
+
+    if (query.exec()) {
+        sql = "INSERT INTO tmp_lambda_table (material, temperature, lambda) values(?,?,?)";
+        QVariantList temperatures;
+        QVariantList lambdas;
+        QVariantList ids;
+        for (QMap<float,float>::iterator it = tmpLambdaMap.begin();it != tmpLambdaMap.end();it++) {
+            temperatures << it.key();
+            qDebug() << temperatures;
+            lambdas << it.value();
+            ids << index;
+        }
+        query.prepare(sql);
+        query.addBindValue(ids);
+        query.addBindValue(temperatures);
+        query.addBindValue(lambdas);
+
+        if (query.execBatch()) {
+            return true;
+        } else {
+            qDebug() << query.lastError();
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+bool MaterialLib::updateMaterialTmpCpMap(int index, QMap<float, float> tmpCpMap)
+{
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "DELETE FROM tmp_cp_table WHERE material = ?";
+
+    query.prepare(sql);
+    query.addBindValue(index);
+
+    if (query.exec()) {
+        sql = "INSERT INTO tmp_lambda_table (material, temperature, cp) values(?,?,?)";
+        QVariantList temperatures;
+        QVariantList cps;
+        QVariantList ids;
+        for (QMap<float,float>::iterator it = tmpCpMap.begin();it != tmpCpMap.end();it++) {
+            temperatures << it.key();
+            cps << it.value();
+            ids << index;
+        }
+        query.prepare(sql);
+        query.addBindValue(ids);
+        query.addBindValue(temperatures);
+        query.addBindValue(cps);
+
+        if (query.execBatch()) {
+            return true;
+        } else {
+            qDebug() << query.lastError();
+            return false;
+        }
+    } else {
+        return false;
+    }
+}

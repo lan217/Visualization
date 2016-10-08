@@ -7,6 +7,8 @@
 #include <QPushButton>
 #include <QTableWidget>
 #include <QTimeEdit>
+#include <QTextEdit>
+
 #include "common.h"
 #include "my_usual_radiobox.h"
 
@@ -18,7 +20,7 @@ public:
     ~WidgetWindTunnel();
     void changeOutputTabWidget(const QStringList tabLabels);
 private:
-    QComboBox *calProjectBox;
+    MyUsualRadioBox *calProjectRadio;
     QTableWidget *inputTable;
     QTableWidget *output_Table;
     QTabWidget *outputTabWidget;
@@ -26,6 +28,8 @@ private:
     QPushButton *loadButton;
     QPushButton *createButton;
     QPushButton *calButton;
+
+    QTextEdit *textEdit;
 
 signals:
 

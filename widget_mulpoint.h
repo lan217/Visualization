@@ -23,6 +23,7 @@ public:
     explicit MulPointWidget(QWidget *parent = 0);
     ~MulPointWidget();
     void init();
+    QString getParameterData();
 
 
 private:
@@ -37,16 +38,22 @@ private:
     MyUsualRadioBox *ifUsingFlowRadio;
     MyUsualRadioBox *flowSettingRadio;
     MyUsualRadioBox *pressureSetRadio;
+    MyUsualRadioBox *temperatureRadio;
+    QLineEdit *wallTemperatureEdit;
 
     QPushButton *geometryFileButton;
 
     QLineEdit *frontRadiusEdit;
-    QLineEdit *calNumEdit;
+    QComboBox *calNumBox;
 
     QTableWidget *tableSettingWidget;
     AmplificationFactorBox *amplificationBox;
     TransformBox *transformRadioBox;
     QGraphicsView *resultGraph;
+
+public slots:
+    void changeTable(int index);
+    void changeWidgetByRadioBox(int index);
 };
 
 #endif // WIDGET_MULPOINT_H
