@@ -63,9 +63,7 @@ HEADERS  += \
     dialog_table.h \
     my_combobox_group.h
 
-FORMS    += \
-    widget_wind_tunnel.ui \
-    widget_atmosphere_model.ui
+FORMS    +=
 
 STATECHARTS +=
 

@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QSqlError>
 #include <QMessageBox>
+
 MateriaLibDialog::MateriaLibDialog(QWidget *parent) :
     QDialog(parent)
 {
@@ -18,6 +19,16 @@ MateriaLibDialog::~MateriaLibDialog()
 
 void MateriaLibDialog::init()
 {
+    addAction = new QAction(tr("添加材料"), this);
+    addMenu = new QMenu(this);
+    addMenu->addAction(addAction);
+    delAction = new QAction(tr("删除材料"), this);
+    delMenu = new QMenu(this);
+    delMenu->addAction(delAction);
+    connect(addMenu, &QMenu::triggered, this, &MateriaLibDialog::onAddMenuTriggered);
+    connect(delMenu, &QMenu::triggered, this, &MateriaLibDialog::onDelMenuTriggered);
+
+
     QHBoxLayout *mainLayout = new QHBoxLayout();
     QGridLayout *leftLayout = new QGridLayout();
     QGridLayout *rightLayout = new QGridLayout();
@@ -28,10 +39,12 @@ void MateriaLibDialog::init()
     connect(treeWidget, &QTreeWidget::itemClicked, this, &MateriaLibDialog::treeItemClicked);
     connect(treeWidget, &QTreeWidget::itemChanged, this, &MateriaLibDialog::treeItemChange);
 
-    QTreeWidgetItem *group_metal = new QTreeWidgetItem(treeWidget);
+    group_metal = new QTreeWidgetItem(treeWidget);
     group_metal->setText(0, "金属材料");
-    QTreeWidgetItem *group_setting = new QTreeWidgetItem(treeWidget);
+    group_metal->setFlags(Qt::ItemIsEnabled);
+    group_setting = new QTreeWidgetItem(treeWidget);
     group_setting->setText(0, "非金属材料");
+    group_setting->setFlags(Qt::ItemIsEnabled);
 
     leftLayout->addWidget(treeWidget, 0, 0, 1, 2);
 
@@ -168,6 +181,40 @@ void MateriaLibDialog::treeItemChange(QTreeWidgetItem* item)
     } else {
         emit dataChanged();
     }
+
+}
+
+void MateriaLibDialog::contextMenuEvent(QContextMenuEvent *event)
+{
+    QTreeWidgetItem *item = treeWidget->currentItem();
+
+    if (item != NULL && item->parent() == NULL) {
+        addMenu->exec(QCursor::pos());
+    } else if (item != NULL) {
+        delMenu->exec(QCursor::pos());
+    }
+
+}
+
+void MateriaLibDialog::onAddMenuTriggered(QAction *action)
+{
+    QTreeWidgetItem *item = treeWidget->currentItem();
+
+    if (item != NULL && item->parent() == NULL) {
+        int topItemindex = treeWidget->indexOfTopLevelItem(item);
+        qDebug() << topItemindex;
+        if (topItemindex == 0) {
+            MyQtreeWidgetItem *metal;
+            metal = new MyQtreeWidgetItem(group_metal);
+            metal->setText(0, "eee");
+            treeWidget->setCurrentItem(metal);
+
+        }
+    }
+}
+
+void MateriaLibDialog::onDelMenuTriggered(QAction *action)
+{
 
 }
 
