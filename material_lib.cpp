@@ -5,6 +5,7 @@ MaterialLib* MaterialLib::mInstance;
 const QString MaterialLib::CREATE_MATERIAL_TABLE_SQL = "CREATE TABLE material_table ("
                                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                            "name VARCHAR NOT NULL,"
+                                                       "UNIQUE,"
                                            "destiny FLOAT,"
                                            "emissivity FLOAT,"
                                            "type       INTEGER NOT NULL)";
@@ -56,7 +57,7 @@ MaterialLib::Material* MaterialLib::getMaterial(int index)
 {
     Material* material = NULL;
 
-    QSqlQuery query = QSqlQuery(db);;
+    QSqlQuery query = QSqlQuery(db);
     QString sql = "SELECT destiny, emissivity FROM material_table "
                   "WHERE id = " + QString::number(index);
 
@@ -72,23 +73,75 @@ MaterialLib::Material* MaterialLib::getMaterial(int index)
     return material;
 }
 
-QMap<int, MaterialLib::Material> MaterialLib::getMaterialNameList()
+QList<MaterialLib::Material> MaterialLib::getMaterialNameList()
 {
-    QMap<int, MaterialLib::Material> map;
+    QList<MaterialLib::Material> list;
 
-    QSqlQuery query = QSqlQuery(db);;
-    QString sql = "SELECT id, name, type FROM material_table";
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "SELECT id, name, type FROM material_table ORDER BY type, name";
 
     if (query.exec(sql)) {
         while (query.next()) {
             Material material;
+            material.id = query.value(0).toInt();
             material.materialName = query.value(1).toString();
             material.type = query.value(2).toInt();
-            map.insert(query.value(0).toInt(), material);
+            list.append(material);
         }
     }
 
-    return map;
+    return list;
+}
+
+bool MaterialLib::addMaterial(const QString& name, int tyle)
+{
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "INSERT INTO material_table (name, type) values(?,?)";
+
+    query.prepare(sql);
+    query.addBindValue(name);
+    query.addBindValue(tyle);
+
+    if (query.exec()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MaterialLib::deleteMaterial(int index)
+{
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "DELETE FROM material_table WHERE id = ?";
+
+    query.prepare(sql);
+    query.addBindValue(index);
+
+    if (query.exec()) {
+        return true;
+    } else {
+        qDebug() << query.lastError();
+        return false;
+    }
+}
+
+bool MaterialLib::isExist(const QString& name)
+{
+    QSqlQuery query = QSqlQuery(db);
+    QString sql = "SELECT name FROM material_table WHERE name = ?";
+
+    query.prepare(sql);
+    query.addBindValue(name);
+
+    if (query.exec()) {
+        if (query.next()) {
+            return true;
+        }
+
+        return false;
+    } else {
+        return false;
+    }
 }
 
 QMap<float, float> MaterialLib::getTmpLambdaMap(int index)
