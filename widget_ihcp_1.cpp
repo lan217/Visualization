@@ -103,10 +103,10 @@ void Widget_ihcp_1::init()
 
     for (int i = 0;i < 5;i++) {
         QStringList labels;
-        QList<MaterialLib::Material> material = MaterialLib::getInstance()->getMaterialNameList();
+        QMap<int, MaterialLib::Material> material = MaterialLib::getInstance()->getMaterialNameList();
 
-        for (QList<MaterialLib::Material>::iterator it = material.begin();it != material.end();it++){
-            labels << (*it).materialName;
+        for (QMap<int, MaterialLib::Material>::iterator it = material.begin();it != material.end();it++){
+            labels << it.value().materialName;
         }
         for (int i = 0;i < firTableWidget->columnCount();i++) {
             QComboBox *metalBox = new QComboBox();

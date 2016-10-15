@@ -7,16 +7,16 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     LoginDialog dialog;
-//    dialog.show();
+    dialog.show();
 
-//    if (dialog.exec() == QDialog::Accepted) {
+    if (dialog.exec() == QDialog::Accepted) {
         // login success
         WidgetMain w;
         w.show();
 
         return a.exec();
-//    } else {
-//        return 0;
-//    }
+    } else {
+        return 0;
+    }
 
 }

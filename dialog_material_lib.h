@@ -32,7 +32,7 @@ private:
     QLineEdit *emissivityEdit;
     QTreeWidget *treeWidget;
     QTreeWidgetItem *group_metal;
-    QTreeWidgetItem *group_nonmetal;
+    QTreeWidgetItem *group_setting;
     QPushButton *saveMaterialButton;
     QTableWidget *tmpLambdaTable;
     QTableWidget *tmpCpTable;

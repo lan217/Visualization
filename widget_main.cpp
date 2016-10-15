@@ -19,7 +19,7 @@ void WidgetMain::init()
 {
 
     this->resize(Utils::windowSize());
-    qDebug("%d  %d", this->width(), this->height());
+qDebug("%d  %d", this->width(), this->height());
 
     this->setStyleSheet("QGroupBox#topGroupBox{"
                         "font-weight: bold;}"

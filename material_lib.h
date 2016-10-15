@@ -4,7 +4,6 @@
 #include <QStringList>
 #include <QList>
 #include <QMap>
-#include <QHash>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
@@ -13,16 +12,14 @@ class MaterialLib
 {
 
 public:
-
+    MaterialLib();
+    ~MaterialLib();
     class Material;
     static MaterialLib *getInstance();
-    QList<Material> getMaterialNameList();
+    QMap<int, Material> getMaterialNameList();
     QMap<float, float> getTmpLambdaMap(int index);
     QMap<float, float> getTmpCpMap(int index);
     Material* getMaterial(int index);
-    bool addMaterial(const QString& name, int tyle);
-    bool deleteMaterial(int index);
-    bool isExist(const QString& name);
     bool updateMaterialName(int index, const QString &name);
     bool updateMaterialProperty(int index, float destiny ,float emissivity);
     bool updateMaterialTmpLambdaMap(int index, QMap<float, float> tmpLambdaMap);
@@ -30,7 +27,6 @@ public:
 
     class Material {
     public:
-        int id;
         QString materialName;
         float destiny;
         float emissivity;
@@ -39,8 +35,6 @@ public:
 
 
 private:
-    MaterialLib();
-    ~MaterialLib();
     const static QString CREATE_MATERIAL_TABLE_SQL;
     const static QString CREATE_TMPLAMBDA_TABLE_SQL;
     const static QString CREATE_TMPCP_TABLE_SQL;
