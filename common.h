@@ -5,6 +5,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include "utils.h"
+#include "utils/utils.h"
 
 #endif // INCLUDE_H

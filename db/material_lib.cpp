@@ -1,4 +1,4 @@
-#include "material_lib.h"
+#include "db/material_lib.h"
 #include <QDebug>
 
 MaterialLib* MaterialLib::mInstance;

@@ -1,12 +1,12 @@
 #ifndef WIDGET_FLAT_H
 #define WIDGET_FLAT_H
-#include "my_usual_radiobox.h"
-#include "generaleditbox.h"
+#include "mywidget/my_usual_radiobox.h"
+#include "mywidget/generaleditbox.h"
 #include <QDialog>
 #include <QLabel>
 #include <QTableWidget>
 #include <QComboBox>
-#include "my_combobox_group.h"
+#include "mywidget/my_combobox_group.h"
 #include "common.h"
 
 class FlatWidget : public QWidget

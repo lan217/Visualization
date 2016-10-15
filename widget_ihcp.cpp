@@ -1,5 +1,5 @@
 #include "widget_ihcp.h"
-#include "my_treewidget_item.h"
+#include "mywidget/my_treewidget_item.h"
 #include "widget_ihcp_1.h"
 #include "widget_ihcp_2.h"
 #include <QLabel>

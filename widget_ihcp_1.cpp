@@ -1,11 +1,11 @@
 #include "widget_ihcp_1.h"
-#include "material_lib.h"
+#include "db/material_lib.h"
 #include "dialog_material_lib.h"
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
-#include "material_lib.h"
+#include "db/material_lib.h"
 #include <QComboBox>
 Widget_ihcp_1::Widget_ihcp_1(QWidget *parent) :
     QWidget(parent)

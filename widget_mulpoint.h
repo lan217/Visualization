@@ -11,8 +11,8 @@
 #include <QComboBox>
 #include <QGroupBox>
 #include <QGraphicsView>
-#include "my_usual_radiobox.h"
-#include "my_combobox_group.h"
+#include "mywidget/my_usual_radiobox.h"
+#include "mywidget/my_combobox_group.h"
 #include "common.h"
 
 class MulPointWidget : public QWidget

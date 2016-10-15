@@ -11,9 +11,9 @@
 #include <QMenu>
 #include <QAction>
 #include <QContextMenuEvent>
-#include "my_treewidget_item.h"
-#include "material_lib.h"
-#include "my_treewidget_item.h"
+#include "mywidget/my_treewidget_item.h"
+#include "db/material_lib.h"
+#include "mywidget/my_treewidget_item.h"
 
 class MateriaLibDialog : public QDialog
 {
