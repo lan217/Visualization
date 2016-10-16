@@ -1,4 +1,4 @@
-#include "generaleditbox.h"
+#include "mywidget/generaleditbox.h"
 #include <QDebug>
 GeneralEditBox::GeneralEditBox(QString title, const QStringList &labels, int rows, int cols, QWidget *parent) :
     QGroupBox(title, parent)

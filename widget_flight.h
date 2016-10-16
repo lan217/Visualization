@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QTableWidget>
-#include "generaleditbox.h"
+#include "mywidget/generaleditbox.h"
 #include "common.h"
 #include <QTextEdit>
 

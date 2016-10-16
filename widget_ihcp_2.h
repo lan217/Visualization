@@ -1,7 +1,7 @@
 #ifndef WIDGET_IHCP_2_H
 #define WIDGET_IHCP_2_H
-#include "generaleditbox.h"
-#include "my_usual_radiobox.h"
+#include "mywidget/generaleditbox.h"
+#include "mywidget/my_usual_radiobox.h"
 #include <QDialog>
 #include <QWidget>
 #include <QLabel>

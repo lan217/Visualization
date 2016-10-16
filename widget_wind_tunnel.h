@@ -10,7 +10,7 @@
 #include <QTextEdit>
 
 #include "common.h"
-#include "my_usual_radiobox.h"
+#include "mywidget/my_usual_radiobox.h"
 
 class WidgetWindTunnel : public QWidget
 {

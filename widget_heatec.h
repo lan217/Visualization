@@ -5,7 +5,7 @@
 #include <QTreeWidgetItem>
 #include <QPushButton>
 #include <QStackedWidget>
-#include "my_treewidget_item.h"
+#include "mywidget/my_treewidget_item.h"
 #include "widget_cal_ball_head.h"
 #include "widget_cal_cylinder.h"
 #include "widget_flight.h"

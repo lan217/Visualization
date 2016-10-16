@@ -5,9 +5,9 @@
 #include <QRadioButton>
 #include <QButtonGroup>
 #include "common.h"
-#include "my_usual_radiobox.h"
-#include "my_combobox_group.h"
-#include "generaleditbox.h"
+#include "mywidget/my_usual_radiobox.h"
+#include "mywidget/my_combobox_group.h"
+#include "mywidget/generaleditbox.h"
 
 class CalCylinderWidget : public QWidget
 {

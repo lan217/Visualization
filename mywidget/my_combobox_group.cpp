@@ -1,4 +1,4 @@
-#include "my_combobox_group.h"
+#include "mywidget/my_combobox_group.h"
 #include <QLayout>
 comboBoxGroupBox::comboBoxGroupBox(const QString &groupTitle, QWidget *parent) :
     QGroupBox(groupTitle, parent)

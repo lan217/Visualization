@@ -9,8 +9,8 @@
 #include <QTimeEdit>
 #include <QGraphicsView>
 #include "common.h"
-#include "my_usual_radiobox.h"
-#include "generaleditbox.h"
+#include "mywidget/my_usual_radiobox.h"
+#include "mywidget/generaleditbox.h"
 
 class WidgetHcd : public QWidget
 {

@@ -1,5 +1,5 @@
 #include "widget_heatec.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include <QLayout>
 #include <typeinfo>
 #include <QDebug>

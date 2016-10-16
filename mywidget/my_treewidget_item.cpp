@@ -1,4 +1,4 @@
-#include "my_treewidget_item.h"
+#include "mywidget/my_treewidget_item.h"
 MyQtreeWidgetItem::MyQtreeWidgetItem(QTreeWidgetItem *parent, int index) :
     QTreeWidgetItem(parent)
 {

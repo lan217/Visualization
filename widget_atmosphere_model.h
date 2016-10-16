@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTableWidget>
 #include "common.h"
-#include "my_usual_radiobox.h"
+#include "mywidget/my_usual_radiobox.h"
 
 
 class AtmosphereModelWidget : public QWidget

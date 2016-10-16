@@ -1,7 +1,7 @@
 #include <QLayout>
 
 #include "widget_main.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include <QDebug>
 
 WidgetMain::WidgetMain(QWidget *parent) :
